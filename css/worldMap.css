@@ -1,0 +1,32 @@
+
+.overlay {
+  fill: none;
+  pointer-events: all;
+}
+
+.iso {
+  pointer-events: all;
+  stroke: white;
+  stroke-width: 0.1px;
+  fill: #DFE2E1;
+}
+
+.iso.active {
+  pointer-events: all;
+  stroke: steelblue;
+  stroke-width: 0.25px;
+  fill: grey;
+}
+
+.world-labels {
+  font-family: "Helvetica Neue",Helvetica,sans-serif;
+  fill: #FFF;
+  text-shadow: 4px 4px 4px #444;
+  text-anchor: middle;
+}
+
+.capital-city-labels {
+  font-family: "Helvetica Neue",Helvetica,sans-serif;
+  fill: #555;
+  text-shadow: 2px 2px 2px #FFF;
+}

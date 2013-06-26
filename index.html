@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"><meta charset="utf-8">
+    <title>World Map</title>
+    <style>
+        @import url("css/style.css");
+        @import url("css/worldMap.css");
+        @import url("js/chosen-master/chosen/chosen.css");
+    </style>
+    <!-- jquery 1.8.1 include -->
+    <script src="http://code.jquery.com/jquery-1.8.1.min.js"></script>
+    <!-- jquery chosen include -->
+    <script src="js/chosen-master/chosen/chosen.jquery.min.js"></script>
+	<!-- d3js includes -->
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+	<script src="http://d3js.org/topojson.v1.min.js"></script>
+	<script src="http://d3js.org/queue.v1.min.js"></script>
+	<!-- world map -->
+	<script src="js/worldMap.js"></script>
+
+    <script>
+		jQuery(document).ready(function() {
+			//load world dataset
+			queue()
+			    .defer(d3.json, "js/data/admin0_50m.json")
+			    .defer(d3.json, "js/data/major-cities.json")
+			    .await(function (error, world, cities, locations) {
+					//declare worldMap datasets
+					worldMap.world = world;
+					worldMap.capCities = cities;
+					
+					//init svg map with id of div
+					worldMap.initSvg("map"); 
+					//add the world svg layer
+					worldMap.worldLayer();
+					//add the captials svg layer
+					worldMap.capitalsLayer();					
+
+		    		//init chosen
+		    		$(".chzn-select").chosen();
+			});
+
+			//on drop down select
+			$('#world-dd').chosen().change(function() {
+				//get iso id
+				var iso_id = $("#world-dd").find('option:selected').val();
+				//use click function to zoom to bbox
+				worldMap.zoomTo(worldMap.g.select('#world-'+iso_id).property("__data__"));
+			});
+    	});
+    </script>
+
+</head>
+
+<body>
+	<div id="world-map">
+		<table><tr><td>
+				<h1 style="padding-left:5%;">World Map</h1>
+			</td><td>
+				<aside>
+					reference - <a href="http://bl.ocks.org/mbostock" target="_blank">mbostock's bl.ocks</a>!
+				</aside>
+			</td></tr>
+		</table>
+
+		<div class="dropdown" style="position:absolute;z-index:9999;right:2%;padding-top:1%;">
+			<select name="world-dd" id="world-dd" data-placeholder="-Select Contry-" class="chzn-select" style="width:230px;">
+				<option value=""></option> 
+				<!-- dynamically loaded from TopoJson world dataset -->
+			</select>
+		</div>
+
+		<div align="center">
+			<div id="map">
+				<!-- SVG world map goes here -->
+			</div>
+		</div>
+	</div>
+</body>
+</html>
