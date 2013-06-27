@@ -21,4 +21,17 @@ The following are prerequisites are required to prepare custom TopoJSON datasets
 > Filtered by capital cities.
 
 ### Processing
-To be continued...
+The Shapefiles from [Natural Earth](http://www.naturalearthdata.com/) are converted to GeoJSON format and then TopoJSON.
+- Shp to GeoJSON using [ogr2ogr](http://www.gdal.org/ogr2ogr.html)
+  ~# ogr2ogr -f GeoJSON -select oid_,iso_a2,iso_a3,subunit,pop_est output.json input.shp
+- GeoJSON to TopoJSON using [TopoJSON api](https://github.com/mbostock/topojson/wiki/Command-Line-Reference)
+  ~# topojson -p OID_,ISO_A2,ISO_A3,SUBUNIT,POP_EST -o output.json -- admin0=input.json/input.shp
+
+### Notes
+TopoJSON includes a parameter for the renaming of properties
+- If the properties parameter (-p) is left blank then no attributes are included in the TopoJSON.
+- The attributes entered using the properties parameter (-p) are CASE SENSITIVE to those in the input file
+- To specify the object name within the generated TopoJSON file, prefix the input file with “name=”
+[Simplification](http://bost.ocks.org/mike/simplify/)
+- TopoJSON includes a parameter for polygon simplification using the Visvalingam algorithm.
+  topojson -p OID_,ISO_A2,ISO_A3,SUBUNIT,POP_EST --simplify-proportion 0.8 -o output.json input.json/input.shp
