@@ -137,7 +137,9 @@ worldMap = {
 				//xlink:href to icon
 				.attr("xlink:href", "css/capital.png")
 				//assign id
-				.attr("id", "capital-city")
+				.attr("id", function(d) { return "capital-city-"+d.properties.ISO_A2; })
+				//assign class
+				.attr("class", "capital-city")
 				//assign name
 				.attr("name", function(d) { return d.properties.NAME; })
 				//image position is equal to location minus half the image size (must be updated with each zoom) 
@@ -152,6 +154,9 @@ worldMap = {
 		    .enter().append("text")
 			//filtering example
 			.filter(function(d) { return d.properties.ADM0CAP })
+				//assign id
+				.attr("id", function(d) { return "capital-city-labels-"+d.properties.ISO_A2} )
+				//class
 			    .attr("class", "capital-city-labels")
 			    .attr("transform", function(d) { return "translate(" + worldMap.projection(d.geometry.coordinates) + ")"; })
 				.attr("dy", ".35em")
@@ -212,8 +217,8 @@ worldMap = {
 		//scale labels
 		worldMap.labelScale(s);
 
-		//set country label visibility
-		worldMap.labelVisibility(s);
+		//select country labels
+		worldMap.labelSelect(d.properties.iso_a2);
 
 		//transform world
 		worldMap.g.transition().duration(worldMap.fade).attr("transform",
@@ -229,7 +234,7 @@ worldMap = {
 		var iconW = worldMap.iconWidth / s;
 		var iconH = worldMap.iconHeight / s;
 
-		worldMap.g.selectAll("#capital-city")
+		worldMap.g.selectAll(".capital-city")
 			.transition().duration(time)
 			.attr("width", iconW)
 			.attr("height", iconH)
@@ -260,6 +265,27 @@ worldMap = {
 
 //-------------------------------------------------------------------------------------------------
 // function - turn layers on and off based on map scale
+	labelSelect: function(iso_a2){
+		//turn off all labels & cities
+		worldMap.g.selectAll(".world-labels")
+			.style("display", "none");
+		worldMap.g.selectAll(".capital-city")
+			.style("display", "none");			
+		worldMap.g.selectAll(".capital-city-labels")
+			.style("display", "none");
+
+		//turn on selected country by iso_a2
+		worldMap.g.selectAll("#world-labels-"+iso_a2)
+			.style("display", "block");
+		worldMap.g.selectAll("#capital-city-"+iso_a2)
+			.style("display", "block");
+		worldMap.g.selectAll("#capital-city-labels-"+iso_a2)
+			.style("display", "block");
+
+	},
+
+//-------------------------------------------------------------------------------------------------
+// function - turn layers on and off based on map scale
 	labelVisibility: function(s){
 
 		//country labels
@@ -274,10 +300,10 @@ worldMap = {
 
 		//captial cities
 		if(worldMap.scale2<s){			
-			worldMap.g.selectAll("#capital-city")
+			worldMap.g.selectAll(".capital-city")
 				.style("display", "block");
 		}else{
-			worldMap.g.selectAll("#capital-city")
+			worldMap.g.selectAll(".capital-city")
 				.style("display", "none");
 		}
 
@@ -307,7 +333,15 @@ worldMap = {
 		//scale labels
 		worldMap.labelScale(worldMap.s);
 
-		//set country label visibility
+		//turn off all labels & cities
+		worldMap.g.selectAll(".world-labels")
+			.style("display", "none");
+		worldMap.g.selectAll(".capital-city")
+			.style("display", "none");			
+		worldMap.g.selectAll(".capital-city-labels")
+			.style("display", "none");
+
+		//set country label & labels visibility
 		worldMap.labelVisibility(worldMap.s);
 
 		//restore to previous map view
@@ -317,6 +351,3 @@ worldMap = {
 //-------------------------------------------------------------------------------------------------		   		
 // end SvgMap object
 }
-
-
-		
